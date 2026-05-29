@@ -1,15 +1,18 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8" />
-<meta name="viewport" content="width=device-width, initial-scale=1.0" />
-<title>Liquid AI</title>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>Liquid Gemini AI</title>
 
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
 
 <style>
+
 *{
     margin:0;
     padding:0;
@@ -17,288 +20,547 @@
 }
 
 :root{
-    --bg1:#0b1020;
-    --bg2:#121b35;
     --glass:rgba(255,255,255,0.08);
-    --glass-border:rgba(255,255,255,0.15);
-    --text:#f5f7ff;
-    --sub:#aeb8d0;
-    --accent:#7aa2ff;
+    --glass-border:rgba(255,255,255,0.12);
+    --text:#ffffff;
+    --sub:#cbd5e1;
 }
 
 body{
     font-family:'Inter',sans-serif;
-    height:100vh;
     overflow:hidden;
-    color:var(--text);
-    background:
-        radial-gradient(circle at top left,#2b4cff55,transparent 30%),
-        radial-gradient(circle at bottom right,#7c4dff33,transparent 30%),
-        linear-gradient(135deg,var(--bg1),var(--bg2));
-    display:flex;
-    flex-direction:column;
+    height:100vh;
+    color:white;
+    background:#060816;
+    position:relative;
 }
 
-body::before{
-    content:"";
+/* REAL LIQUID BACKGROUND */
+
+.bg{
     position:fixed;
     inset:0;
-    backdrop-filter:blur(120px);
-    pointer-events:none;
+    overflow:hidden;
 }
 
+.blob{
+    position:absolute;
+    border-radius:50%;
+    filter:blur(80px);
+    animation:float 16s infinite ease-in-out;
+    opacity:0.7;
+}
+
+.blob1{
+    width:500px;
+    height:500px;
+    background:#3b82f6;
+    top:-120px;
+    left:-100px;
+}
+
+.blob2{
+    width:450px;
+    height:450px;
+    background:#7c3aed;
+    bottom:-100px;
+    right:-100px;
+    animation-delay:2s;
+}
+
+.blob3{
+    width:350px;
+    height:350px;
+    background:#06b6d4;
+    top:40%;
+    left:45%;
+    animation-delay:4s;
+}
+
+@keyframes float{
+
+    0%{
+        transform:translate(0,0) scale(1);
+    }
+
+    25%{
+        transform:translate(40px,-30px) scale(1.08);
+    }
+
+    50%{
+        transform:translate(-20px,30px) scale(0.96);
+    }
+
+    75%{
+        transform:translate(30px,20px) scale(1.05);
+    }
+
+    100%{
+        transform:translate(0,0) scale(1);
+    }
+}
+
+/* WATER WAVES */
+
+.wave{
+    position:absolute;
+    width:200%;
+    height:200%;
+    background:
+    radial-gradient(circle at center,
+    rgba(255,255,255,0.06),
+    transparent 60%);
+    animation:waveMove 20s linear infinite;
+}
+
+.wave2{
+    animation-duration:30s;
+    opacity:0.5;
+}
+
+@keyframes waveMove{
+
+    from{
+        transform:rotate(0deg);
+    }
+
+    to{
+        transform:rotate(360deg);
+    }
+}
+
+/* APP */
+
+.app{
+    position:relative;
+    z-index:5;
+    display:flex;
+    flex-direction:column;
+    height:100vh;
+    width:100%;
+}
+
+/* HEADER */
+
 header{
-    margin:20px;
-    padding:20px 28px;
-    border-radius:28px;
+
+    margin:16px;
+    padding:20px 26px;
+
+    border-radius:32px;
+
     background:linear-gradient(
         180deg,
         rgba(255,255,255,0.16),
-        rgba(255,255,255,0.06)
+        rgba(255,255,255,0.04)
     );
-    border:1px solid rgba(255,255,255,0.18);
-    backdrop-filter:blur(30px) saturate(180%);
-    -webkit-backdrop-filter:blur(30px) saturate(180%);
-    box-shadow:
-        inset 0 1px 1px rgba(255,255,255,0.25),
-        0 10px 40px rgba(0,0,0,0.35);
 
-    display:flex;
-    justify-content:space-between;
-    align-items:center;
+    border:1px solid rgba(255,255,255,0.15);
+
+    backdrop-filter:blur(40px) saturate(180%);
+    -webkit-backdrop-filter:blur(40px) saturate(180%);
+
+    box-shadow:
+    inset 0 1px 1px rgba(255,255,255,0.3),
+    0 20px 60px rgba(0,0,0,0.35);
+
 }
 
 .logo{
     font-size:1.4rem;
-    font-weight:700;
-    letter-spacing:0.5px;
+    font-weight:800;
 }
 
-.tag{
+.sub{
     color:var(--sub);
-    font-size:0.9rem;
+    margin-top:4px;
+    font-size:0.92rem;
 }
 
-#chat-container{
+/* CHAT */
+
+#chat{
+
     flex:1;
+
     overflow-y:auto;
-    padding:10px 22px 22px;
+
+    padding:0 16px 16px;
+
     display:flex;
     flex-direction:column;
     gap:18px;
+
 }
 
-.message{
-    max-width:75%;
-    padding:18px 22px;
-    border-radius:28px;
-    position:relative;
-    line-height:1.7;
-    animation:fade .35s ease;
+/* MESSAGE */
 
-    backdrop-filter:blur(24px) saturate(180%);
-    -webkit-backdrop-filter:blur(24px) saturate(180%);
+.message{
+
+    max-width:80%;
+
+    padding:18px 22px;
+
+    border-radius:30px;
+
+    position:relative;
+
+    line-height:1.8;
+
+    animation:show 0.35s ease;
+
+    backdrop-filter:blur(30px) saturate(180%);
+    -webkit-backdrop-filter:blur(30px) saturate(180%);
 
     border:1px solid rgba(255,255,255,0.12);
 
+    overflow:hidden;
+
     box-shadow:
-        inset 0 1px 1px rgba(255,255,255,0.18),
-        0 12px 35px rgba(0,0,0,0.25);
+    inset 0 1px 1px rgba(255,255,255,0.25),
+    0 15px 40px rgba(0,0,0,0.3);
+
 }
 
 .message::before{
+
     content:"";
+
     position:absolute;
+
     inset:0;
-    border-radius:inherit;
+
     background:linear-gradient(
         180deg,
-        rgba(255,255,255,0.12),
-        transparent 40%
+        rgba(255,255,255,0.18),
+        transparent 50%
     );
+
     pointer-events:none;
 }
 
-.user-message{
+.user{
+
     align-self:flex-end;
+
     background:linear-gradient(
         180deg,
-        rgba(88,130,255,0.35),
-        rgba(88,130,255,0.18)
+        rgba(59,130,246,0.28),
+        rgba(59,130,246,0.12)
     );
+
 }
 
-.ai-message{
+.ai{
+
     align-self:flex-start;
+
     background:linear-gradient(
         180deg,
         rgba(255,255,255,0.12),
         rgba(255,255,255,0.05)
     );
+
 }
 
-#input-area{
-    padding:20px;
+@keyframes show{
+
+    from{
+        opacity:0;
+        transform:translateY(15px) scale(0.96);
+    }
+
+    to{
+        opacity:1;
+        transform:translateY(0) scale(1);
+    }
 }
 
-.input-wrap{
+/* INPUT AREA */
+
+.bottom{
+
+    padding:16px;
+}
+
+.inputBox{
+
     display:flex;
     align-items:flex-end;
     gap:16px;
 
     padding:18px;
-    border-radius:32px;
+
+    border-radius:34px;
 
     background:linear-gradient(
         180deg,
         rgba(255,255,255,0.14),
-        rgba(255,255,255,0.06)
+        rgba(255,255,255,0.05)
     );
 
-    border:1px solid rgba(255,255,255,0.15);
+    border:1px solid rgba(255,255,255,0.12);
 
-    backdrop-filter:blur(30px) saturate(180%);
+    backdrop-filter:blur(40px) saturate(180%);
+    -webkit-backdrop-filter:blur(40px) saturate(180%);
 
     box-shadow:
-        inset 0 1px 1px rgba(255,255,255,0.22),
-        0 12px 40px rgba(0,0,0,0.3);
+    inset 0 1px 1px rgba(255,255,255,0.2),
+    0 20px 50px rgba(0,0,0,0.35);
+
 }
 
 textarea{
+
     flex:1;
-    resize:none;
+
+    background:transparent;
+
     border:none;
     outline:none;
-    background:transparent;
+
     color:white;
+
+    resize:none;
+
+    min-height:30px;
+    max-height:200px;
+
     font-size:1rem;
-    min-height:28px;
-    max-height:180px;
+
     font-family:inherit;
+
+    line-height:1.7;
 }
 
 textarea::placeholder{
-    color:#b8c3de;
+    color:#cbd5e1;
 }
 
-button{
-    border:none;
-    outline:none;
-    cursor:pointer;
+/* LIQUID BUTTON */
 
-    width:58px;
-    height:58px;
+button{
+
+    width:64px;
+    height:64px;
 
     border-radius:50%;
 
+    border:none;
+
+    cursor:pointer;
+
     color:white;
-    font-size:1.2rem;
-    font-weight:700;
+
+    font-size:1.4rem;
+    font-weight:800;
 
     background:linear-gradient(
         180deg,
-        #8db1ff,
-        #4b7cff
+        #9ec5ff,
+        #3b82f6
     );
 
-    box-shadow:
-        inset 0 2px 4px rgba(255,255,255,0.3),
-        0 10px 30px rgba(61,112,255,0.45);
+    position:relative;
 
-    transition:0.3s ease;
+    overflow:hidden;
+
+    box-shadow:
+    inset 0 2px 4px rgba(255,255,255,0.4),
+    0 15px 40px rgba(59,130,246,0.5);
+
+    transition:0.35s;
+}
+
+button::before{
+
+    content:"";
+
+    position:absolute;
+
+    width:180%;
+    height:180%;
+
+    background:
+    radial-gradient(circle,
+    rgba(255,255,255,0.55),
+    transparent 55%);
+
+    top:-40%;
+    left:-40%;
+
+    animation:liquid 5s infinite linear;
+}
+
+@keyframes liquid{
+
+    from{
+        transform:rotate(0deg);
+    }
+
+    to{
+        transform:rotate(360deg);
+    }
 }
 
 button:hover{
-    transform:translateY(-3px) scale(1.03);
+
+    transform:translateY(-4px) scale(1.04);
+
     box-shadow:
-        inset 0 2px 4px rgba(255,255,255,0.4),
-        0 15px 35px rgba(61,112,255,0.55);
+    inset 0 2px 4px rgba(255,255,255,0.4),
+    0 20px 50px rgba(59,130,246,0.65);
 }
 
 button:active{
-    transform:scale(0.96);
+    transform:scale(0.94);
 }
 
-@keyframes fade{
-    from{
-        opacity:0;
-        transform:translateY(14px);
-    }
-    to{
-        opacity:1;
-        transform:translateY(0);
-    }
-}
+/* SCROLL */
 
 ::-webkit-scrollbar{
     width:8px;
 }
 
 ::-webkit-scrollbar-thumb{
-    background:rgba(255,255,255,0.15);
+    background:rgba(255,255,255,0.14);
     border-radius:20px;
 }
 
-@media(max-width:768px){
+/* RESPONSIVE */
 
-    header{
-        margin:12px;
-        padding:18px;
-        border-radius:24px;
-    }
+@media(max-width:768px){
 
     .message{
         max-width:92%;
+        font-size:0.96rem;
     }
 
-    #chat-container{
-        padding:10px 12px 12px;
+    header{
+        margin:10px;
+        padding:18px;
     }
 
-    #input-area{
-        padding:12px;
+    .inputBox{
+        padding:14px;
     }
 
+    button{
+        width:58px;
+        height:58px;
+    }
 }
+
 </style>
 </head>
+
 <body>
 
+<div class="bg">
+
+    <div class="blob blob1"></div>
+    <div class="blob blob2"></div>
+    <div class="blob blob3"></div>
+
+    <div class="wave"></div>
+    <div class="wave wave2"></div>
+
+</div>
+
+<div class="app">
+
 <header>
-    <div>
-        <div class="logo"> Liquid AI</div>
-        <div class="tag">Apple Inspired Liquid Glass UI</div>
+
+    <div class="logo"> Liquid Gemini AI</div>
+
+    <div class="sub">
+        Hyper Realistic Liquid Glass Interface
     </div>
+
 </header>
 
-<div id="chat-container"></div>
+<div id="chat"></div>
 
-<div id="input-area">
-    <div class="input-wrap">
+<div class="bottom">
+
+    <div class="inputBox">
+
         <textarea
-            id="user-input"
-            placeholder="Ask anything..."
+            id="input"
+            placeholder="कुछ भी पूछें..."
         ></textarea>
 
-        <button id="send-btn">↑</button>
+        <button id="send">
+            ↑
+        </button>
+
     </div>
+
+</div>
+
 </div>
 
 <script>
-const input = document.getElementById('user-input');
-const sendBtn = document.getElementById('send-btn');
-const chat = document.getElementById('chat-container');
 
-sendBtn.addEventListener('click', sendMessage);
+const input = document.getElementById('input');
+const send = document.getElementById('send');
+const chat = document.getElementById('chat');
 
-input.addEventListener('keydown', (e)=>{
-    if(e.key === 'Enter' && !e.shiftKey){
-        e.preventDefault();
-        sendMessage();
+/* =========================
+   GEMINI API SETTINGS
+========================= */
+
+/*
+
+👇👇👇👇👇👇👇👇👇👇👇👇👇👇
+
+यहाँ अपनी Google AI Studio API KEY डालें
+
+*/
+
+const API_KEY = "यहाँ API KEY डालें";
+
+/*
+
+👇 Gemini Model
+
+*/
+
+const MODEL = "gemini-1.5-flash";
+
+/* SEND ONLY BUTTON CLICK */
+
+send.addEventListener('click', sendMessage);
+
+/* ENTER = NEW LINE */
+
+input.addEventListener('keydown',(e)=>{
+
+    if(e.key === 'Enter'){
+
+        /*
+            अब Enter दबाने पर
+            message send नहीं होगा
+            सिर्फ नई लाइन बनेगी
+        */
+
+        return;
     }
 });
 
-function sendMessage(){
+/* AUTO HEIGHT */
+
+input.addEventListener('input',()=>{
+
+    input.style.height = '30px';
+
+    input.style.height =
+    input.scrollHeight + 'px';
+});
+
+/* SEND MESSAGE */
+
+async function sendMessage(){
 
     const text = input.value.trim();
 
@@ -307,33 +569,91 @@ function sendMessage(){
     addMessage(text,'user');
 
     input.value='';
-    input.style.height='28px';
 
-    setTimeout(()=>{
+    input.style.height='30px';
+
+    const loading = addMessage(
+        '✨ सोच रहा हूँ...',
+        'ai'
+    );
+
+    try{
+
+        const response = await fetch(
+
+            `https://generativelanguage.googleapis.com/v1beta/models/${MODEL}:generateContent?key=${API_KEY}`,
+
+            {
+                method:'POST',
+
+                headers:{
+                    'Content-Type':'application/json'
+                },
+
+                body:JSON.stringify({
+
+                    contents:[
+
+                        {
+                            parts:[
+                                {
+                                    text:text
+                                }
+                            ]
+                        }
+
+                    ]
+
+                })
+
+            }
+
+        );
+
+        const data = await response.json();
+
+        loading.remove();
+
+        const reply =
+        data?.candidates?.[0]?.content?.parts?.[0]?.text
+        || 'कोई response नहीं मिला';
+
+        addMessage(reply,'ai');
+
+    }
+
+    catch(error){
+
+        loading.remove();
+
         addMessage(
-            '✨ Apple Liquid Glass UI working perfectly. Connect your AI API here.',
+            '❌ Error: API check करें',
             'ai'
         );
-    },500);
+
+        console.log(error);
+    }
 }
+
+/* ADD MESSAGE */
 
 function addMessage(text,type){
 
-    const div=document.createElement('div');
+    const div = document.createElement('div');
 
-    div.className=`message ${type}-message`;
+    div.className =
+    `message ${type}`;
 
-    div.textContent=text;
+    div.textContent = text;
 
     chat.appendChild(div);
 
-    chat.scrollTop=chat.scrollHeight;
+    chat.scrollTop =
+    chat.scrollHeight;
+
+    return div;
 }
 
-input.addEventListener('input',()=>{
-    input.style.height='28px';
-    input.style.height=input.scrollHeight+'px';
-});
 </script>
 
 </body>
